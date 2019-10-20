@@ -6,7 +6,9 @@ from Lexer.Token import Token
 from InternalError import InternalError
 from Colour import bcolors
 import sys
+import updater
 import os
+import requests
 
 DETAILED_ERROR = False
 
@@ -91,18 +93,30 @@ def run (document):
 
         sys.exit(1)
 
-
 def main():
     global DETAILED_ERROR
 
-    print("\033[90m" + "Albert Modenbach" + bcolors.ENDC)
+    print("\033[90m" + "Albert Modenbach - Version " + str(updater.CURRENT_VERSION) + '\033[0m')
+
+    try:
+        val = updater.check_for_update()
+    except requests.ConnectionError:
+        val = {}
 
     if len(sys.argv) < 2:
         print(bcolors.FAIL + "Usage: interpreter [file path]" + bcolors.ENDC)
         sys.exit(1)
 
-    if len(sys.argv) == 3 and sys.argv[2] == "-d":
+    if "-d" in sys.argv:
         DETAILED_ERROR = True
+
+    if "-u" in sys.argv:
+        try:
+            updater.auto_update(val)
+        except requests.ConnectionError:
+            print(bcolors.FAIL + "A Network error occurred" + bcolors.ENDC)
+            sys.exit(1)
+        return
 
     file_path = sys.argv[1]
     try:
@@ -119,6 +133,8 @@ def main():
 
     s += "\n"
 
+    if s == "\n":
+        return
     run(s)
 
 if __name__ == "__main__":
