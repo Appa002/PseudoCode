@@ -1,0 +1,51 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+file_extensions:
+  - pseudocode
+
+scope: "main"
+name: "Pseudocode Syntax"
+
+
+contexts:
+  # The prototype context is prepended to all contexts but those setting
+  # meta_include_prototype: false.
+  prototype:
+    - include: comments
+
+  main:
+    # The main context is the initial starting point of our syntax.
+    # Include other contexts from here (or specify them directly).
+    - include: keywords
+    - include: numbers
+    - include: strings
+    - include: types
+    - include: logic
+
+
+  keywords:
+    # Keywords are if, else for and while.
+    # Note that blackslashes don't need to be escaped within single quoted
+    # strings in YAML. When using single quoted strings, only single quotes
+    # need to be escaped: this is done by using two single quotes next to each
+    # other.
+    - match: '\b(input|output|loop|until|while|end|to|from|if|then|else)\b'
+      scope: keyword.control.acc
+
+  numbers:
+    - match: '\b(-)?[0-9.]+\b'
+      scope: constant.numeric.acc
+
+  strings:
+    # Strings begin and end with quotes, and use backslashes as an escape
+    # character.
+    - match: '".*"'
+      scope: string.acc
+  types:
+    - match: '(debugger)'
+      scope: "storage.type.acc"
+
+  logic:
+    - match: '(!=|=|!|<=|>=|<|(?<!-)>|&&|\|\||\^)'
+      scope: "keyword.operator.comparison"
